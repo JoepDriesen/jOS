@@ -14,3 +14,24 @@ int putchar(int ic)
 #endif
 	return ic;
 }
+
+int putint(int num)
+{
+	int pow = 1;
+	int max = 10;
+	
+	while (num >= max)
+	{
+		max *= 10;
+		pow++;
+	}
+	
+//	while (pow > 0)
+//	{
+//		max /= 10;
+//		pow--;
+		
+//		int high = num / max;
+		putchar('0' + num);
+//	}
+}
