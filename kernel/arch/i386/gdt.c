@@ -5,20 +5,32 @@ extern void gdt_flush(unsigned);
 
 void gdt_set_entry(int, uint32_t, uint32_t, uint8_t, uint8_t);
 
-gdt_entry_t gdt[5];
+gdt_entry_t gdt[6];
 gdt_ptr_t gdtPointer;
 
 void gdt_init()
 {
-	gdtPointer.limit = (sizeof(gdt_entry_t) * 5) - 1;
+	gdtPointer.limit = (sizeof(gdt_entry_t) * 6) - 1;
 	gdtPointer.base = (unsigned) &gdt;
 	
+	// Null Selector
 	gdt_set_entry(0, 0, 0, 0, 0);
+
+	// SYSENTER Code Segment
 	gdt_set_entry(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+	
+	// SYSENTER Data Segment (Stack)
 	gdt_set_entry(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+	
+	// SYSEXIT Code Segment
 	gdt_set_entry(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+
+	// SYSEXIT Data Segment (User-mode Stack)
 	gdt_set_entry(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
-	printf("GDT Pointer Base: %X", gdtPointer.base);
+
+	// TSS Segment (Multitasking)	
+	gdt_set_entry(5, 0, 0xFFFFFFFF, 0x90, 0xCF);
+
 	gdt_flush((unsigned) &gdtPointer);
 }
 

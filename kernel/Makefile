@@ -21,6 +21,10 @@ ARCHDIR:=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
 
+DRIVERSDIR:=drivers
+
+include $(DRIVERSDIR)/make.config
+
 CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
 CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS)
@@ -28,6 +32,8 @@ LIBS:=$(LIBS) $(KERNEL_ARCH_LIBS)
  
 OBJS:=\
 $(KERNEL_ARCH_OBJS) \
+$(KERNEL_DRIVERS_OBJS) \
+kernel/interrupts.o \
 kernel/kernel.o \
  
 CRTI_OBJ:=$(ARCHDIR)/crti.o

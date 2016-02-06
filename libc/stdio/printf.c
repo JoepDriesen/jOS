@@ -9,7 +9,7 @@ static void print(const char* data, size_t data_length)
 		putchar((int) ((const unsigned char*) data)[i]);
 }
 
-static void printuint(int num)
+static void printuint(unsigned int num)
 {
 	if (num >= 10)
 	{
@@ -28,7 +28,7 @@ static void printint(int num)
 	printuint(num);
 }	
 
-static void printrawhex(int num, char a, char b, char c, char d, char e, char f)
+static void printrawhex(unsigned int num, char a, char b, char c, char d, char e, char f)
 {
 	if (num >= 16)
 	{
