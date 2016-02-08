@@ -38,10 +38,7 @@ void memory_init(multiboot_info_t* mbt)
 	memory_map_t* mmap = (memory_map_t*) mbt->mmap_addr;
 	while (mmap < (memory_map_t*) mbt->mmap_addr + mbt->mmap_length) {
 		// Memory above 4GiB is not supported
-		if (mmap->addr_high > 0)
-			continue;
-
-		if (mmap->type == 1)
+		if (mmap->addr_high <= 0 && mmap->type == 1)
 		{
 			uint32_t startAddr = mmap->addr_low / BLOCK_SIZE;
 			if (mmap->addr_low % BLOCK_SIZE != 0)
@@ -55,7 +52,7 @@ void memory_init(multiboot_info_t* mbt)
 			// This entry describes memory that is available for use
 			set_memory_availability(startAddr, endAddr, true);
 		}
-		
+
 		// Get the next memory map entry
 		mmap = (memory_map_t*) ( (unsigned int)mmap + mmap->size + sizeof(unsigned int) );
 	}
