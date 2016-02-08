@@ -37,15 +37,23 @@ void memory_init(multiboot_info_t* mbt)
 	// Check the memory map provided by grub to find available memory
 	memory_map_t* mmap = (memory_map_t*) mbt->mmap_addr;
 	while (mmap < (memory_map_t*) mbt->mmap_addr + mbt->mmap_length) {
-		
+		// Memory above 4GiB is not supported
+		if (mmap->addr_high > 0)
+			continue;
+
 		if (mmap->type == 1)
 		{
 			uint32_t startAddr = mmap->addr_low / BLOCK_SIZE;
 			if (mmap->addr_low % BLOCK_SIZE != 0)
 				startAddr += BLOCK_SIZE;
 			
+			uint32_t endAddr = mmap->addr_low + mmap->len_low;
+			// Check for overflow in case there is more than 4GiB of RAM
+			if (endAddr < startAddr)
+				endAddr = 0xFFFFFFFF;
+			
 			// This entry describes memory that is available for use
-			set_memory_availability(startAddr, mmap->addr_low + mmap->len_low, true);
+			set_memory_availability(startAddr, endAddr, true);
 		}
 		
 		// Get the next memory map entry
