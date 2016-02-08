@@ -66,12 +66,37 @@ static void printhexuc(int num)
 	putchar('x');
 	printrawhex(num, 'A', 'B', 'C', 'D', 'E', 'F');
 }
- 
+
+static void printrawbits(unsigned int num, int bits)
+{
+	if (num >= 2)
+		printrawbits(num / 2, ++bits);
+	
+	if (bits % 4 == 0)
+		putchar(' ');
+	
+	putchar('0' + num % 2);
+}
+
+static void printbits(unsigned int num)
+{
+	printrawbits(num, 0);
+}
+
 int printf(const char* restrict format, ...)
 {
 	va_list parameters;
 	va_start(parameters, format);
+	
+	int ret = vprintf(format, parameters);
+	
+	va_end(parameters);
+
+	return ret;
+}
  
+int vprintf(const char* restrict format, va_list parameters)
+{
 	int written = 0;
 	size_t amount;
 	bool rejected_bad_specifier = false;
@@ -103,7 +128,13 @@ int printf(const char* restrict format, ...)
 			goto print_c;
 		}
  
-		if ( *format == 'c' )
+		if ( *format == 'b' )
+		{
+			format++;
+			unsigned int n = va_arg(parameters, int);	
+			printbits(n);
+		}
+		else if ( *format == 'c' )
 		{
 			format++;
 			char c = (char) va_arg(parameters, int /* char promotes to int */);

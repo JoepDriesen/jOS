@@ -8,4 +8,6 @@ void register_interrupt_handler(uint8_t n, void_callback_arg_t handler);
 
 void unhandled_interrupt(uint32_t intNum, ...);
 
+void general_protection_fault_handler(uint32_t intNum, ...);
+
 #endif

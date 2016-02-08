@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/interrupts.h>
+#include <kernel/debug.h>
 #include <kernel/io.h>
 #include <kernel/pic.h>
 
@@ -22,6 +23,9 @@ void keyboard_init()
 
 void keyboard_interrupt_handler(uint32_t int_no, ...)
 {
+	if (int_no != 0x1)
+		panic("Keyboard Interrupt Handler called for IRQ %u", int_no);
+	
 	unsigned char scancode;
 
 	scancode = inb(0x60);

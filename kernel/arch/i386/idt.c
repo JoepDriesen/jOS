@@ -52,6 +52,8 @@ void idt_init()
 		register_interrupt_handler(i, unhandled_interrupt);
 	}
 	
+	register_interrupt_handler(13, general_protection_fault_handler);
+	
 	idt_flush((unsigned int) &idtPointer);
 }
 
@@ -68,7 +70,7 @@ static void idt_set_gate(uint8_t n, uint32_t offset, uint16_t selector, uint8_t 
 void isr_handler(struct regs *r)
 {
 	void_callback_arg_t handler = interruptHandlers[r->int_no];
-	handler(r->int_no, r->err_code, r->eax, r->ebx, r->ecx, r->edx, r->edi, r->esi);
+	handler(r->int_no, r->err_code, r->eip, r->eax, r->ebx, r->ecx, r->edx, r->edi, r->esi);
 }
 
 void irq_handler(struct regs *r)
@@ -76,7 +78,7 @@ void irq_handler(struct regs *r)
 	PIC_sendEOI(r->int_no);
 	
 	void_callback_arg_t handler = interruptHandlers[r->int_no];
-	handler(r->int_no, r->err_code, r->eax, r->ebx, r->ecx, r->edx, r->edi, r->esi);
+	handler(r->int_no, r->err_code, r->eip, r->eax, r->ebx, r->ecx, r->edx, r->edi, r->esi);
 }
 
 inline bool are_interrupts_enabled()

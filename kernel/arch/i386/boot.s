@@ -21,6 +21,12 @@ stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
 
+# For physical memory management, we use the free page bitmap method. Here we reserve space for this bitmap
+.section .memory_bitmap, "aw", @nobits
+.global memory_bitmap
+memory_bitmap:
+.skip 131072 # 128 KiB
+
 # The linker script specifies _start as the entry point to the kernel and the bootloader will jump to
 # this position once the kernel has been loaded.
 .section .text
@@ -35,6 +41,13 @@ _start:
 	# To set up a stack, we simply set the esp register to point to the top of our stack (as it grows
 	# downwards).
 	movl $stack_top, %esp
+	
+	# Pass multiboot magic number (0x2BADB002)
+	push %eax
+		
+	# Grub initializes a multiboot_info structure and puts its location in EBX
+	# Push this on the stack so we can use it to detect the pcs memory
+	push %ebx
 	
 	# We can now execute C code.
 	

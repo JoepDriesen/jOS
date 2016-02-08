@@ -7,6 +7,8 @@ SECTIONS
 	/* Begin putting sections at 1 MiB, a conventional place for kernels to be loaded at by bootloaders */
 	. = 1M;
 
+	kernelStart = .;
+	
 	/* First put the multiboot header, then the .text section */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
@@ -32,5 +34,8 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 		*(.bootstrap_stack)
+		*(.memory_bitmap)
 	}
+	
+	kernelEnd = .;
 }
